@@ -1,0 +1,60 @@
+import re
+from docx import Document
+
+# Hàm xóa đoạn văn có cặp tag bắt đầu bằng /kx và kết thúc bằng kx/
+def remove_paragraphs_with_custom_tags(input_file, output_file, user_tags):
+    # Mở file Word
+    doc = Document(input_file)
+    
+    # Biến lưu trữ các đoạn văn không bị xóa
+    paragraphs_to_keep = []
+    
+    # Biểu thức chính quy để tìm các tag bắt đầu và kết thúc bất kỳ
+    tag_pattern = re.compile(r'/[a-zA-Z0-9]+|[a-zA-Z0-9]+/')  # Bắt đầu bằng / và kết thúc bằng /
+    
+    # Cờ để xác định đoạn văn cần xóa
+    inside_tagged_paragraph = False
+    
+    # Duyệt qua từng đoạn văn
+    for para in doc.paragraphs:
+        para_text = para.text
+        
+        # Kiểm tra xem đoạn văn có bắt đầu bằng bất kỳ tag nào mà người dùng yêu cầu không
+        if any(f"/{tag}" in para_text for tag in user_tags):
+            inside_tagged_paragraph = True  # Bắt đầu đoạn văn cần xóa
+        
+        # Nếu đoạn văn không nằm trong đoạn cần xóa thì giữ lại
+        if not inside_tagged_paragraph:
+            paragraphs_to_keep.append(para_text)
+        
+        # Kiểm tra xem đoạn văn có kết thúc bằng tag do người dùng yêu cầu không
+        if any(f"{tag}/" in para_text for tag in user_tags):
+            inside_tagged_paragraph = False  # Kết thúc đoạn văn cần xóa
+
+    # Bước 2: Sau khi giữ lại các đoạn không bị xóa, loại bỏ tất cả các ký tự đặc biệt còn sót lại
+    cleaned_paragraphs = []
+    for para_text in paragraphs_to_keep:
+        # Loại bỏ tất cả các tag đặc biệt trong đoạn văn
+        para_text = re.sub(tag_pattern, '', para_text)  # Xóa các tag dạng /kx và kx/
+        cleaned_paragraphs.append(para_text)
+    
+    # Tạo một document mới để lưu kết quả
+    new_doc = Document()
+    for para_text in cleaned_paragraphs:
+        if para_text.strip():  # Chỉ thêm các đoạn không rỗng
+            new_doc.add_paragraph(para_text)
+    
+    # Lưu file kết quả
+    new_doc.save(output_file)
+
+# Nhập tên file đầu vào và file đầu ra
+input_file = 'input.docx'  # Tên file Word đầu vào
+output_file = 'output.docx'  # Tên file Word đầu ra
+
+# Nhập danh sách các tag mà người dùng muốn xóa đoạn văn chứa nó
+user_tags = input("Nhập các ký tự mà bạn muốn xóa đoạn văn chứa chúng, cách nhau bởi khoảng trắng (ví dụ: k1 k2 k3): ").split()
+
+# Gọi hàm xử lý
+remove_paragraphs_with_custom_tags(input_file, output_file, user_tags)
+
+print(f"Đã xóa các đoạn văn chứa các ký tự đặc biệt và loại bỏ tất cả các ký tự đặc biệt còn sót lại. Kết quả được lưu vào '{output_file}'.")
