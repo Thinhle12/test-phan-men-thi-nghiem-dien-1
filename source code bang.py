@@ -5,7 +5,7 @@ from docx import Document
 def remove_tables_with_special_characters(input_file, output_file, special_tags):
     # Mở file Word
     doc = Document(input_file)
-    special_tags_uppercase = special_tags.uppercase
+    
     # Duyệt qua từng bảng trong tài liệu và đánh dấu các bảng cần xóa
     tables_to_delete = []
     
@@ -21,7 +21,7 @@ def remove_tables_with_special_characters(input_file, output_file, special_tags)
             print(f"Nội dung ô đầu tiên của hàng thứ hai: '{first_cell_text}'")
 
             # Kiểm tra nếu ô đầu tiên của hàng thứ hai chứa bất kỳ ký tự đặc biệt nào mà người dùng nhập vào
-            if any(tag in first_cell_text for tag in special_tags_uppercase):
+            if any(tag in first_cell_text for tag in special_tags):
                 print(f"Bảng {table_index + 1} có chứa ký tự đặc biệt và sẽ bị xóa.")
                 # Nếu có, thêm bảng vào danh sách cần xóa
                 tables_to_delete.append(table)
