@@ -1,4 +1,4 @@
-import re
+import os
 from docx import Document
 
 # Hàm cập nhật nội dung bảng đầu tiên với ngày và serial RTU do người dùng nhập vào mà giữ nguyên định dạng
@@ -62,8 +62,30 @@ def remove_tables_with_special_characters(input_file, output_file, special_tags,
     doc.save(output_file)
     print(f"Đã lưu kết quả vào '{output_file}'.")
 
-# Nhập tên file đầu vào và file đầu ra
-input_file = 'input.docx'  # Tên file Word đầu vào
+# Hàm liệt kê các file trong thư mục "template" và yêu cầu người dùng chọn file đầu vào
+def select_input_file(template_folder):
+    # Liệt kê các file trong thư mục "template"
+    files = [f for f in os.listdir(template_folder) if f.endswith('.docx')]
+
+    # Hiển thị danh sách file cho người dùng
+    print("Chọn file đầu vào từ danh sách:")
+    for i, file_name in enumerate(files, start=1):
+        print(f"{i}. {file_name}")
+
+    # Yêu cầu người dùng nhập số tương ứng với file
+    choice = int(input("Nhập số tương ứng với file bạn muốn chọn: "))
+    selected_file = files[choice - 1]
+
+    # Trả về đường dẫn đầy đủ đến file được chọn
+    return os.path.join(template_folder, selected_file)
+
+# Thư mục chứa các file template
+template_folder = 'template'
+
+# Gọi hàm để chọn file đầu vào
+input_file = select_input_file(template_folder)
+
+# Nhập tên file đầu ra
 output_file = 'output.docx'  # Tên file Word đầu ra
 
 # Nhập danh sách các ký tự đặc biệt mà người dùng muốn tìm
