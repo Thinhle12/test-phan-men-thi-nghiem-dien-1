@@ -76,26 +76,27 @@ def select_input_file(template_folder):
     choice = int(input("Nhập số tương ứng với file bạn muốn chọn: "))
     selected_file = files[choice - 1]
 
-    # Trả về đường dẫn đầy đủ đến file được chọn
-    return os.path.join(template_folder, selected_file)
+    # Trả về tên file và đường dẫn đầy đủ đến file được chọn
+    return selected_file, os.path.join(template_folder, selected_file)
 
 # Thư mục chứa các file template
 template_folder = 'template'
 
 # Gọi hàm để chọn file đầu vào
-input_file = select_input_file(template_folder)
+selected_file_name, input_file = select_input_file(template_folder)
 
-# Nhập tên file đầu ra
-output_file = 'output.docx'  # Tên file Word đầu ra
+# Nhập số serial RTU từ người dùng
+serial_rtu = input("Nhập số serial RTU: ")
+
+# Đặt tên file đầu ra theo cú pháp yêu cầu
+output_file_name = f"BienBan_RMU_{selected_file_name.split('.')[0]}_{serial_rtu}.docx"
+output_file = os.path.join('.', output_file_name)  # Lưu file đầu ra vào thư mục hiện tại
 
 # Nhập danh sách các ký tự đặc biệt mà người dùng muốn tìm
 special_tags = input("Nhập các ký tự đặc biệt, cách nhau bởi khoảng cách (ví dụ: k1 k2 k3): ").split()
 
 # Nhập ngày thử nghiệm từ người dùng
 test_date = input("Nhập ngày thử nghiệm (ví dụ: 2024-09-15): ")
-
-# Nhập số serial RTU từ người dùng
-serial_rtu = input("Nhập số serial RTU: ")
 
 # Gọi hàm xử lý
 remove_tables_with_special_characters(input_file, output_file, special_tags, test_date, serial_rtu)
