@@ -79,6 +79,14 @@ def select_input_file(template_folder):
     # Trả về tên file và đường dẫn đầy đủ đến file được chọn
     return selected_file, os.path.join(template_folder, selected_file)
 
+# Hàm tạo thư mục nếu chưa tồn tại
+def create_output_folder(output_folder):
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+        print(f"Thư mục '{output_folder}' đã được tạo.")
+    else:
+        print(f"Thư mục '{output_folder}' đã tồn tại.")
+
 # Thư mục chứa các file template
 template_folder = 'template'
 
@@ -90,7 +98,13 @@ serial_rtu = input("Nhập số serial RTU: ")
 
 # Đặt tên file đầu ra theo cú pháp yêu cầu
 output_file_name = f"BienBan_RMU_{selected_file_name.split('.')[0]}_{serial_rtu}.docx"
-output_file = os.path.join('.', output_file_name)  # Lưu file đầu ra vào thư mục hiện tại
+
+# Tạo thư mục "output" nếu chưa tồn tại
+output_folder = 'output'
+create_output_folder(output_folder)
+
+# Đường dẫn đầy đủ đến file đầu ra trong thư mục "output"
+output_file = os.path.join(output_folder, output_file_name)
 
 # Nhập danh sách các ký tự đặc biệt mà người dùng muốn tìm
 special_tags = input("Nhập các ký tự đặc biệt, cách nhau bởi khoảng cách (ví dụ: k1 k2 k3): ").split()
