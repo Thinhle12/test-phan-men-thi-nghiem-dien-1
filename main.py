@@ -5,8 +5,8 @@ from tkinter import ttk, filedialog, messagebox
 from docx import Document
 from tkinter import PhotoImage
 
-# Hàm cập nhật nội dung bảng đầu tiên với ngày và serial RTU do người dùng nhập vào mà giữ nguyên định dạng
-def update_first_table(doc, test_date, serial_rtu):
+# Hàm cập nhật nội dung bảng đầu tiên với ngày, serial RTU và serial ngăn do người dùng nhập vào mà giữ nguyên định dạng
+def update_first_table(doc, test_date, serial_rtu, serial_ngan):
     # Lấy bảng đầu tiên từ tài liệu
     first_table = doc.tables[0]
 
@@ -21,14 +21,17 @@ def update_first_table(doc, test_date, serial_rtu):
                     # Thay thế tag <SERIAL RTU> bằng giá trị người dùng nhập vào mà giữ nguyên định dạng
                     if "<SERIAL RTU>" in run.text:
                         run.text = run.text.replace("<SERIAL RTU>", serial_rtu)
+                    # Thay thế tag <SERIAL_NGAN> bằng giá trị người dùng nhập vào mà giữ nguyên định dạng
+                    if "<SERIAL NGAN>" in run.text:
+                        run.text = run.text.replace("<SERIAL NGAN>", serial_ngan)
 
 # Hàm giữ lại các bảng chứa ký tự đặc biệt và xóa các bảng còn lại
-def remove_tables_with_special_characters(input_file, output_file, special_tags, test_date, serial_rtu):
+def remove_tables_with_special_characters(input_file, output_file, special_tags, test_date, serial_rtu, serial_ngan):
     # Mở file Word
     doc = Document(input_file)
 
-    # Cập nhật bảng đầu tiên với thông tin ngày và serial RTU
-    update_first_table(doc, test_date, serial_rtu)
+    # Cập nhật bảng đầu tiên với thông tin ngày, serial RTU và serial ngăn
+    update_first_table(doc, test_date, serial_rtu, serial_ngan)
 
     # Duyệt qua từng bảng trong tài liệu và đánh dấu các bảng cần xóa
     tables_to_delete = []
@@ -78,20 +81,21 @@ def export_file():
 
     special_tags = special_tag_entry.get().split()
     test_date = date_entry.get()
-    serial_rtu = serial_entry.get()
+    serial_rtu = serial_rtu_entry.get()
+    serial_ngan = serial_ngan_entry.get()
 
     # Tạo tên file đầu ra
     output_file = f"BienBan_RMU_{input_file.replace('.docx', '')}_{serial_rtu}.docx"
 
     # Gọi hàm xử lý
-    remove_tables_with_special_characters(input_path, output_file, special_tags, test_date, serial_rtu)
+    remove_tables_with_special_characters(input_path, output_file, special_tags, test_date, serial_rtu, serial_ngan)
 
     messagebox.showinfo("Thành công", f"File đã được lưu vào thư mục 'output' với tên '{output_file}'")
 
 # Thiết lập GUI
 root = tk.Tk()
 root.title("Tool tạo biên bản thí nghiệm điện")
-root.geometry("400x500")
+root.geometry("400x550")
 root.iconbitmap("tool.ico")
 
 # Tác giả phần mềm
@@ -129,11 +133,18 @@ date_entry = tk.Entry(root, width=50)
 date_entry.pack(pady=5)
 
 # Input để nhập serial RTU
-serial_label = tk.Label(root, text="Nhập số serial RTU:")
-serial_label.pack(pady=5)
+serial_rtu_label = tk.Label(root, text="Nhập số serial RTU:")
+serial_rtu_label.pack(pady=5)
 
-serial_entry = tk.Entry(root, width=50)
-serial_entry.pack(pady=5)
+serial_rtu_entry = tk.Entry(root, width=50)
+serial_rtu_entry.pack(pady=5)
+
+# Input để nhập serial ngăn
+serial_ngan_label = tk.Label(root, text="Nhập số serial ngăn:")
+serial_ngan_label.pack(pady=5)
+
+serial_ngan_entry = tk.Entry(root, width=50)
+serial_ngan_entry.pack(pady=5)
 
 # Nút để xuất văn bản
 export_button = tk.Button(root, text="Xuất văn bản", command=export_file)
