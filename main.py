@@ -13,17 +13,19 @@ def update_first_table(doc, test_date, serial_rtu, serial_ngan):
     # Duyệt qua từng hàng trong bảng đầu tiên
     for row in first_table.rows:
         for cell in row.cells:
+            # Duyệt qua từng đoạn văn trong ô
             for paragraph in cell.paragraphs:
+                # Duyệt qua từng run trong đoạn văn
                 for run in paragraph.runs:
-                    # Thay thế tag <DATE> bằng giá trị người dùng nhập vào mà giữ nguyên định dạng
+                    # Thay thế nội dung trong từng run
                     if "<DATE>" in run.text:
                         run.text = run.text.replace("<DATE>", test_date)
-                    # Thay thế tag <SERIAL RTU> bằng giá trị người dùng nhập vào mà giữ nguyên định dạng
                     if "<SERIAL RTU>" in run.text:
                         run.text = run.text.replace("<SERIAL RTU>", serial_rtu)
-                    # Thay thế tag <SERIAL_NGAN> bằng giá trị người dùng nhập vào mà giữ nguyên định dạng
                     if "<SERIAL NGAN>" in run.text:
                         run.text = run.text.replace("<SERIAL NGAN>", serial_ngan)
+
+
 
 # Hàm giữ lại các bảng chứa ký tự đặc biệt và xóa các bảng còn lại
 def remove_tables_with_special_characters(input_file, output_file, special_tags, test_date, serial_rtu, serial_ngan):
